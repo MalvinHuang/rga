@@ -2,8 +2,9 @@ package com.rga;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,6 +14,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,44 +64,56 @@ public class UserControllerTest {
 	}
 
 	@Test
-	public void testGetAll() {
-		fail("Not yet implemented");
+	public void testGetAll() throws Exception{
+		User u = generateMockUser();
+		_mockMvc.perform(put("/api/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
+		u = generateMockUser();
+		_mockMvc.perform(put("/api/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
+		_mockMvc.perform(get("/api/users").contentType(_contentType)).andExpect(status().is2xxSuccessful())
+			.andExpect((jsonPath("$", Matchers.hasSize(2))));
 	}
 
 	@Test
 	public void testGetUser() throws Exception {
 		User u = generateMockUser();
-		_mockMvc.perform(get("/users/{userId}", u.getId())).andExpect(status().isNotFound());
-		_mockMvc.perform(put("/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
-		_mockMvc.perform(get("/users/{userId}", u.getId())).andExpect(status().is2xxSuccessful()).andExpect(jsonPath("$.id", is(u.getId())));
+		_mockMvc.perform(get("/api/users/{userId}", u.getId())).andExpect(status().isNotFound());
+		_mockMvc.perform(put("/api/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
+		_mockMvc.perform(get("/api/users/{userId}", u.getId())).andExpect(status().is2xxSuccessful()).andExpect(jsonPath("$.id", is((int)u.getId())));
 	}
 
 	@Test
 	public void testAddUser() throws Exception {
 		User u = generateMockUser();
-		_mockMvc.perform(put("/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
+		_mockMvc.perform(put("/api/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
 	public void testAddSameUserTwice() throws Exception {
 		User u = generateMockUser();
-		_mockMvc.perform(put("/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
-		_mockMvc.perform(put("/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is4xxClientError());
+		_mockMvc.perform(put("/api/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
+		_mockMvc.perform(put("/api/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is4xxClientError());
 	}
 
 	@Test
-	public void testDeleteUser() {
-		fail("Not yet implemented");
+	public void testDeleteUser() throws Exception{
+		User u = generateMockUser();
+		_mockMvc.perform(put("/api/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
+		_mockMvc.perform(delete("/api/users/{userId}", u.getId())).andExpect(status().is2xxSuccessful());
+		_mockMvc.perform(delete("/api/users/{userId}", u.getId())).andExpect(status().is4xxClientError());
 	}
 
 	@Test
-	public void testUpdateUser() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetNextId() {
-		fail("Not yet implemented");
+	public void testUpdateUser() throws Exception{
+		User u = generateMockUser();
+		_mockMvc.perform(put("/api/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
+		_mockMvc.perform(get("/api/users").contentType(_contentType)).andExpect(status().is2xxSuccessful())
+			.andExpect((jsonPath("$", Matchers.hasSize(1))));
+		_mockMvc.perform(get("/api/users/{userId}", u.getId())).andExpect(status().is2xxSuccessful()).andExpect(jsonPath("$.id", is((int)u.getId())));
+		_mockMvc.perform(get("/api/users/{userId}", u.getId())).andExpect(status().is2xxSuccessful()).andExpect(jsonPath("$.addr", is(u.getAddr())));
+		u.setAddr("Addr");
+		_mockMvc.perform(post("/api/users/{userId}", u.getId()).contentType(_contentType).content(json(u))).andExpect(status().is2xxSuccessful());
+		_mockMvc.perform(get("/api/users/{userId}", u.getId())).andExpect(status().is2xxSuccessful()).andExpect(jsonPath("$.id", is((int)u.getId())));
+		_mockMvc.perform(get("/api/users/{userId}", u.getId())).andExpect(status().is2xxSuccessful()).andExpect(jsonPath("$.addr", is(u.getAddr())));
 	}
 
 	private User generateMockUser() {

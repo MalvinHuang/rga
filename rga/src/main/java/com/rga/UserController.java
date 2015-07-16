@@ -2,6 +2,8 @@ package com.rga;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +17,11 @@ import com.rga.model.User;
 import com.rga.service.UserService;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
+	private static final Logger _log = LoggerFactory.getLogger(UserController.class);
+	
 	@Autowired
 	private UserService _service;
 
@@ -33,6 +37,7 @@ public class UserController {
 
 	@RequestMapping(value = "/{userId}", method = RequestMethod.PUT)
 	public ResponseEntity<?> addUser(@PathVariable long userId, @RequestBody User user) {
+		_log.debug("adding new user: {}", user);
 		user.setId(userId);
 		_service.addUser(user);
 		return new ResponseEntity<>(HttpStatus.CREATED);
@@ -53,6 +58,7 @@ public class UserController {
 
 	@RequestMapping("/new-id")
 	public long getNextId() {
+		_log.debug("returning new id");
 		return _service.getNextId();
 	}
 	

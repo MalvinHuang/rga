@@ -1,0 +1,27 @@
+
+
+    <input type="text" ng-model="userList.search" class="search-query" id="users_search"
+           placeholder="Search">
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th><a href="#/new"><i class="icon-plus-sign"></i></a></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="user in userList.users | filter:userList.search | orderBy:'id'">
+        <td>{{user.id}}</a></td>
+        <td>{{user.username}}</td>
+        <td>{{user.phone}}</td>
+        <td>{{user.addr}}</td>
+        <td>
+          <a ng-href="#/edit/{{user.$id}}"><i class="icon-pencil"></i></a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
