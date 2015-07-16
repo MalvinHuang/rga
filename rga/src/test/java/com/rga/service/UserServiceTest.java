@@ -16,11 +16,11 @@ import com.rga.model.User;
 public class UserServiceTest {
 	
 	private UserService _service;
-	private AtomicLong _counter = new AtomicLong();
 	
 	@Before
 	public void setup() {
 		_service = new UserService();
+		_service.reset();
 		_service.addUser(generateMockUser());
 		_service.addUser(generateMockUser());
 	}
@@ -76,8 +76,9 @@ public class UserServiceTest {
 	@Test
 	public void testDeleteUser() {
 		List<User> users = _service.getAllUsers();
-		for (User user : users)
+		for (User user : users) {
 			_service.deleteUser(user.getId());
+		}
 		assertTrue(_service.getAllUsers().isEmpty());
 	}
 	
@@ -92,7 +93,7 @@ public class UserServiceTest {
 	}
 	
 	private User generateMockUser() {
-		return generateMockUser(_counter.incrementAndGet());
+		return generateMockUser(_service.getNextId());
 	}
 	
 	private User generateMockUser(long id) {

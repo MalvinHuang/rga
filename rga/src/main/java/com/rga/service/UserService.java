@@ -28,11 +28,10 @@ public class UserService {
 	}
 	
 	public void addUser(User user) {
-		_log.debug("add: {}, contain? {}", user, (_userMap.containsValue(user)));
 		validateUser(user);
 		if (_userMap.containsValue(user))
 			throw new UserAlreadyExistException(user.getId());
-		
+
 		_userMap.put(user.getId(), user);
 	}
 	
@@ -40,7 +39,9 @@ public class UserService {
 		validateUser(user);
 		if (!_userMap.containsValue(user))
 			throw new UserNotFoundException(user.getId());
-		
+		if (user.getId() == 0) {
+			_log.error("updated user id 0");
+		}
 		_userMap.put(user.getId(), user);
 	}
 	
@@ -59,6 +60,10 @@ public class UserService {
 	}
 	
 	public List<User> getAllUsers() {
+		for(User u : _userMap.values()) {
+			if (u.getId() == 0)
+				_log.error("ERROR! {}", u);
+		}
 		return Collections.list(Collections.enumeration(_userMap.values()));
 	}
 	
