@@ -4,25 +4,25 @@
       <div class="control-group" ng-class="{error: myForm.username.$invalid && !myForm.username.$pristine}">
         <label>Name</label>
         <input type="text" name="username" ng-model="editUser.user.username" required>
-        <span ng-show="myForm.username.$error.required && !myForm.username.$pristine" class="help-inline">
-            Required {{myForm.username.$pristine}}</span>
+        <span ng-show="myForm.username.$error.required" class="help-inline">
+            Required</span>
       </div>
      
       <div class="control-group" ng-class="{error: myForm.phone.$invalid && !myForm.phone.$pristine}">
         <label>Phone</label>
         <input type="text" name="phone" ng-model="editUser.user.phone" required>
-        <span ng-show="myForm.phone.$error.required && !myForm.phone.$pristine" class="help-inline">
+        <span ng-show="myForm.phone.$error.required" class="help-inline">
             Required</span>
       </div>
      
       <label>Address</label>
-      <textarea name="address" ng-model="editUser.user.address"></textarea>
+      <textarea name="address" ng-model="editUser.user.addr"></textarea>
      
       <br>
       <a href="#/" class="btn">Cancel</a>
       <button ng-click="editUser.save()" ng-disabled="myForm.$invalid"
               class="btn btn-primary">Save</button>
       <button ng-click="editUser.destroy()"
-              ng-show="editUser.user.$id" class="btn btn-danger">Delete</button>
+              ng-hide="{{editUser.user === undefined}}" class="btn btn-danger">Delete</button>
     </form>
 

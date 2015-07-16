@@ -38,7 +38,12 @@
         })
         .when('/edit/:userId', {
           controller:'EditUserController as editUser',
-          templateUrl:'detail.html'
+          templateUrl:'detail.html',
+          resolve: {
+              users: function (userData) {
+                return userData.getAllItems();
+              }
+            }
         })
         .when('/new', {
           controller:'NewUserController as editUser',
@@ -57,9 +62,6 @@
     .controller('NewUserController', function($http, $location, userData) {
       var editUser = this;
       editUser.save = function() {
-//          userData.$add(editUser.user).then(function(data) {
-//              $location.path('/');
-//          });
     	  $http.get('/api/users/new-id').success(function(data) {
     		  editUser.user.id = data;
     	   	  $http.put('/api/users/' + editUser.user.id, editUser.user).success(function(data) {
@@ -67,30 +69,32 @@
         	  }).error(function(data) {
         		  alert(data);
         	  })
-   	  });
+    	  });
        };
     })
      
-    .controller('EditUserController',
-      function($location, $routeParams, userData) {
+    .controller('EditUserController', function($http, $location, $routeParams, users) {
         var editUser = this;
-        var userId = $routeParams.userId,
-            userIndex;
-     
-        editUser.users = userData.users;
-        userIndex = editUser.users.$indexFor(userId);
-        editUser.user = editUser.users[userIndex];
-     
+        var userId = $routeParams.userId;
+        
+        angular.forEach(users, function(user) {
+        	if (user.id == userId) {
+        		editUser.user = user;
+        	}
+        });
+        
         editUser.destroy = function() {
-            editUser.users.$remove(editUser.user).then(function(data) {
-                $location.path('/');
-            });
+        	$http.delete('/api/users/' + editUser.user.id).success(function(data) {
+        		$location.path('/index.html');
+        	})
         };
      
         editUser.save = function() {
-            editUser.users.$save(editUser.user).then(function(data) {
-               $location.path('/');
-            });
+        	$http.post('/api/users/' + editUser.user.id, editUser.user).success(function(data) {
+      		  $location.path('/index.html');
+      	  }).error(function(data) {
+      		  alert(data);
+      	  })
         };
     });
 
