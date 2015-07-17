@@ -3,7 +3,6 @@ package com.rga.service;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.Before;
 import org.junit.Test;

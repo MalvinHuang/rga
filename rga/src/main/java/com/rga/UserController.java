@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,7 @@ import com.rga.model.User;
 import com.rga.service.UserService;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("api/users")
 public class UserController {
 
 	private static final Logger _log = LoggerFactory.getLogger(UserController.class);
@@ -26,6 +27,7 @@ public class UserController {
 	private UserService _service;
 
 	@RequestMapping(method = RequestMethod.GET)
+	@PreAuthorize("hasRole('USER')")
 	public List<User> getAll() {
 		return _service.getAllUsers();
 	}

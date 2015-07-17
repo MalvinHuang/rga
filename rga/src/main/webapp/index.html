@@ -12,7 +12,12 @@
         <script src="js/user.js"></script>
       </head>
       <body>
-        <h2>User List</h2>
+        <h2>Customer Management</h2>
+		<ul class="nav nav-pills" role="tablist">
+			<li class="active"><a href="#/list">home</a></li>
+			<li><a href="#/login">login</a></li>
+			<li ng-show="authenticated"><a href="" ng-click="logout()">logout</a></li>
+		</ul>
         <div ng-view></div>
       </body>
     </html>
